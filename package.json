@@ -1,0 +1,19 @@
+{
+  "name": "instafeed",
+  "version": "1.0.0",
+  "description": "Node Academy Iterations Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hectormaoglb/instafeed.git"
+  },
+  "author": "h.gonzalez@globant.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hectormaoglb/instafeed/issues"
+  },
+  "homepage": "https://github.com/hectormaoglb/instafeed#readme"
+}
