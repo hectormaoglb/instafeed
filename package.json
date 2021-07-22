@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/hectormaoglb/instafeed/issues"
   },
-  "homepage": "https://github.com/hectormaoglb/instafeed#readme"
+  "homepage": "https://github.com/hectormaoglb/instafeed#readme",
+  "devDependencies": {
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "2.3.2"
+  }
 }
