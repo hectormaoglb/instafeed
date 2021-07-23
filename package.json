@@ -4,7 +4,8 @@
   "description": "Node Academy Iterations Project",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "process": "npx nodemon process.js ./article.json"
   },
   "repository": {
     "type": "git",
