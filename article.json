@@ -3,7 +3,7 @@
     "title": "Article Title",
     "author": "Article Author",
     "modifiedAt": "01/01/2021",
-    "publishedAt": "12/01/2021",
+    "publishedAt": "01/01/2021",
     "url": "https://www.google.com",
     "keywords": ["word1", "word2", "word3"],
     "readMins": 10,
