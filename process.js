@@ -1,19 +1,31 @@
 const fs = require("fs");
-const util = require("util");
 const validateArticle = require("./validator/articleValidator");
-const readFile = util.promisify(fs.readFile);
+const articleRepo = require("./repo/articleRepo");
 const articlePath = process.argv[2];
+const validArticlePath = process.argv[3] || "./db.json";
+const invalidArticlePath = process.argv[4] || "./invalid.json";
+
+articleRepo.init({
+  validPath: validArticlePath,
+  invalidPath: invalidArticlePath,
+});
 
 const readArticle = async (path) => {
-  const data = await readFile(path);
+  const data = await fs.promises.readFile(articlePath);
   console.log("Getting file content: " + data);
   return JSON.parse(data);
 };
 
 const processArticle = async () => {
   const article = await readArticle(articlePath);
-  await validateArticle(article);
-  return article;
+  try {
+    await validateArticle(article);
+    await articleRepo.saveValidArticle(article);
+    return article;
+  } catch (error) {
+    await articleRepo.saveInvalidArticle(article);
+    throw error;
+  }
 };
 
 processArticle().then(
