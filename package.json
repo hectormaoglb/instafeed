@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./article.json ./db.json ./invalid.json"
+    "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json"
   },
   "repository": {
     "type": "git",

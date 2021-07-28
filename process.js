@@ -10,14 +10,14 @@ articleRepo.init({
   invalidPath: invalidArticlePath,
 });
 
-const readArticle = async (path) => {
-  const data = await fs.promises.readFile(articlePath);
-  console.log("Getting file content: " + data);
+const readArticleFile = async (path) => {
+  const data = await fs.promises.readFile(path);
+  console.trace("Getting file content: " + data);
   return JSON.parse(data);
 };
 
-const processArticle = async () => {
-  const article = await readArticle(articlePath);
+const processArticle = async (articleFile) => {
+  const article = await readArticleFile(articleFile);
   try {
     await validateArticle(article);
     await articleRepo.saveValidArticle(article);
@@ -28,7 +28,31 @@ const processArticle = async () => {
   }
 };
 
-processArticle().then(
-  (data) => console.debug("Article is Valid 😃"),
-  (err) => console.error("Invalid Article 😭", err)
+const processArticles = async (path) => {
+  const stat = await fs.promises.lstat(path);
+  let files = [];
+  if (stat.isFile()) {
+    files = [path];
+  } else if (stat.isDirectory()) {
+    const internalFiles = await fs.promises.readdir(path);
+    files = internalFiles
+      .filter((file) => !file.startsWith(".") && file.endsWith(".json"))
+      .map((file) => `${path}/${file}`);
+  }
+
+  return Promise.all(
+    files.map(async (file) => {
+      try {
+        await processArticle(file);
+        console.debug(`Valid Article ${file} 😃`);
+      } catch (error) {
+        console.error(`Invalid Article ${file} 😭`, error);
+      }
+    })
+  );
+};
+
+processArticles(articlePath).then(
+  (data) => console.log("Process is finished 🏁"),
+  (err) => console.error("Unexpected Error 🐞", err)
 );
