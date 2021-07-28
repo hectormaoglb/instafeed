@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Node Academy Iterations Project",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "test",
     "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json"
