@@ -1,18 +1,22 @@
-const fs = require("fs");
-const validateArticle = require("./validator/articleValidator");
-const articleRepo = require("./repo/articleRepo");
+import { promises } from "fs";
+import validateArticle from "./validator/articleValidator.mjs";
+import {
+  init,
+  saveValidArticle,
+  saveInvalidArticle,
+} from "./repo/articleRepo.mjs";
 const articlePath = process.argv[2];
 const validArticlePath = process.argv[3] || "./db.json";
 const invalidArticlePath = process.argv[4] || "./invalid.json";
 
-articleRepo.init({
+init({
   validPath: validArticlePath,
   invalidPath: invalidArticlePath,
 });
 
 const readArticleFile = async (path) => {
-  const data = await fs.promises.readFile(path);
-  console.trace("Getting file content: " + data);
+  const data = await promises.readFile(path);
+  console.trace(`Article ${path} ... ${data}`);
   return JSON.parse(data);
 };
 
@@ -20,21 +24,21 @@ const processArticle = async (articleFile) => {
   const article = await readArticleFile(articleFile);
   try {
     await validateArticle(article);
-    await articleRepo.saveValidArticle(article);
+    await saveValidArticle(article);
     return article;
   } catch (error) {
-    await articleRepo.saveInvalidArticle(article);
+    await saveInvalidArticle(article);
     throw error;
   }
 };
 
 const processArticles = async (path) => {
-  const stat = await fs.promises.lstat(path);
+  const stat = await promises.lstat(path);
   let files = [];
   if (stat.isFile()) {
     files = [path];
   } else if (stat.isDirectory()) {
-    const internalFiles = await fs.promises.readdir(path);
+    const internalFiles = await promises.readdir(path);
     files = internalFiles
       .filter((file) => !file.startsWith(".") && file.endsWith(".json"))
       .map((file) => `${path}/${file}`);

@@ -1,5 +1,16 @@
-const validate = require("json-schema").validate;
-const schema = require("./article.schema.json");
+import { validate } from "json-schema";
+import { readFile } from "fs/promises";
+
+let schemaPromise;
+
+const getSchema = async () => {
+  if (!schemaPromise) {
+    schemaPromise = await readFile("validator/article.schema.json").then(
+      (strSchema) => JSON.parse(strSchema)
+    );
+  }
+  return schemaPromise;
+};
 
 const checkPastDate = (field, value, result, required) => {
   if (!value && !required) {
@@ -32,6 +43,7 @@ const checkUrl = (field, value, publishedAt, result) => {
 };
 
 const validateArticle = async (article) => {
+  const schema = await getSchema();
   let result = validate(article, schema);
   if (result.valid) {
     const modifiedAt = new Date(article.modifiedAt);
@@ -53,4 +65,4 @@ const validateArticle = async (article) => {
   return true;
 };
 
-module.exports = validateArticle;
+export default validateArticle;
