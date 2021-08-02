@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "test",
-    "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json"
+    "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json",
+    "server": "npx nodemon --ignore db.json --ignore invalid.json server.js 8080 ./db.json ./invalid.json"
   },
   "repository": {
     "type": "git",
