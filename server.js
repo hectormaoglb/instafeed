@@ -1,42 +1,63 @@
-import http from "http";
-import { init, processArticleRequest } from "./serv/articleService.mjs";
+import express from "express";
+import {
+  init,
+  getAllArticles,
+  getArticleById,
+} from "./serv/articleService.mjs";
 
 const port = parseInt(process.argv[2] || "8080");
 const validArticlePath = process.argv[3] || "./db.json";
 const invalidArticlePath = process.argv[4] || "./invalid.json";
+
+const buildError = (error) => ({
+  status: error.status || 500,
+  message: error.message,
+  error,
+});
+
+const reply = (status, payload, res) => {
+  res.status(status);
+  res.send(JSON.stringify(payload));
+};
+
+const replyWithResult = (result, res) => {
+  reply(200, result, res);
+};
+
+const replyWithError = (error, res) => {
+  console.error(`Error processing request: ${error.message} ❌`, error);
+  const payload = buildError(error);
+  reply(payload.status, payload, res);
+};
 
 init(validArticlePath, invalidArticlePath).then(
   (data) => console.log("Service Ready ✅"),
   (error) => console.error("Service initialization error ❌", error)
 );
 
-const server = http.createServer(async (req, res) => {
-  const path = req.url;
-  res.setHeader("Content-Type", "application/json");
+const app = express();
 
-  let status = 200;
-  let result = {};
+app.get("/articles", async (req, res) => {
+  res.header("Content-Type", "application/json");
   try {
-    result = await processArticleRequest(req);
-    console.log(
-      JSON.stringify({
-        msg: "Operation Successfully 🏁",
-        path,
-        result,
-      })
-    );
+    const result = await getAllArticles();
+    replyWithResult(result, res);
   } catch (error) {
-    console.error(error);
-    status = error.status || 500;
-    result = {
-      msg: error.message,
-      path,
-    };
+    replyWithError(error, res);
   }
-  res.statusCode = status;
-  res.end(JSON.stringify(result));
 });
 
-server.listen(port, () => {
-  console.log(`Server running at port ${port} 🛫`);
+app.get("/articles/:articleId", async (req, res) => {
+  res.header("Content-Type", "application/json");
+  try {
+    const { articleId } = req.params;
+    const result = await getArticleById(articleId);
+    replyWithResult(result, res);
+  } catch (error) {
+    replyWithError(error, res);
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Instafeed app listening 🏁 at http://localhost:${port}`);
 });

@@ -44,12 +44,13 @@ export const init = async (validArticlePath, invalidArticlePath) => {
   }
 };
 
-export const processArticleRequest = async (req) => {
-  const processor = processors
-    .map((rt) => ({
-      ...rt,
-      routeMatch: req.url.match(rt.path),
-    }))
-    .find((rt) => rt.routeMatch != null);
-  return processor.execute(req, processor.routeMatch);
+export const getAllArticles = async () => findAll();
+
+export const getArticleById = async (articleId) => {
+  const result = await findById(articleId);
+  if (!result) {
+    throw new ServiceException(404, `Artcile Not Found [${articleId}]`);
+  } else {
+    return result;
+  }
 };
