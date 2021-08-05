@@ -3,7 +3,10 @@ import {
   init,
   getAllArticles,
   getArticleById,
+  saveArticle,
 } from "./serv/articleService.mjs";
+
+import bodyParser from "body-parser";
 
 const port = parseInt(process.argv[2] || "8080");
 const validArticlePath = process.argv[3] || "./db.json";
@@ -37,11 +40,24 @@ init(validArticlePath, invalidArticlePath).then(
 
 const app = express();
 
+app.use(bodyParser.json());
+
 app.get("/articles", async (req, res) => {
   res.header("Content-Type", "application/json");
   try {
     const result = await getAllArticles();
     replyWithResult(result, res);
+  } catch (error) {
+    replyWithError(error, res);
+  }
+});
+
+app.post("/articles", async (req, res) => {
+  const newArticle = req.body;
+  res.header("Content-Type", "application/json");
+  try {
+    await saveArticle(newArticle);
+    replyWithResult(newArticle, res);
   } catch (error) {
     replyWithError(error, res);
   }

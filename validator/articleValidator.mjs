@@ -1,5 +1,6 @@
 import { validate } from "json-schema";
 import { readFile } from "fs/promises";
+import { ServiceException } from "../exc/serviceException.mjs";
 
 let schemaPromise;
 
@@ -59,7 +60,7 @@ const validateArticle = async (article) => {
     const msg = result.errors
       .map((err) => `${err.property} - ${err.message}`)
       .join("\n");
-    throw new Error(msg);
+    throw new ServiceException(400, msg);
   }
 
   return true;
