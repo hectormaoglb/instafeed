@@ -4,32 +4,11 @@ import {
   loadArticles,
   findAll,
   findById,
+  saveValidArticle,
+  saveInvalidArticle,
 } from "../repo/articleRepo.mjs";
 
-const processors = [
-  {
-    path: /\/articles\/(.*)$/,
-    execute: async (req, routeMatch) => {
-      const articleId = routeMatch[1];
-      const result = await findById(articleId);
-      if (!result) {
-        throw new ServiceException(404, `Artcile Not Found [${articleId}]`);
-      } else {
-        return result;
-      }
-    },
-  },
-  {
-    path: /\/articles$/,
-    execute: async (req, routeMatch) => findAll(),
-  },
-  {
-    path: /.*/,
-    execute: async (req, routeMatch) => {
-      throw new ServiceException(404, `Resource Not Found [${req.url}]`);
-    },
-  },
-];
+import validateArticle from "../validator/articleValidator.mjs";
 
 export const init = async (validArticlePath, invalidArticlePath) => {
   initRepo({
@@ -52,5 +31,15 @@ export const getArticleById = async (articleId) => {
     throw new ServiceException(404, `Artcile Not Found [${articleId}]`);
   } else {
     return result;
+  }
+};
+
+export const saveArticle = async (newArticle) => {
+  try {
+    await validateArticle(newArticle);
+    await saveValidArticle(newArticle);
+  } catch (error) {
+    saveInvalidArticle(newArticle);
+    throw error;
   }
 };

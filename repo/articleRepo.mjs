@@ -1,5 +1,6 @@
 import { promises, createReadStream } from "fs";
 import readline from "readline";
+import { ServiceException } from "../exc/serviceException.mjs";
 
 let opts = {
   validPath: "./db.json",
@@ -58,9 +59,11 @@ export const saveValidArticle = async (article) => {
   if (!articleExists(article)) {
     console.debug("Write a valid article in ", opts.validPath);
     await writeRecord(opts.validPath, article);
-    addArticle();
+    addArticle(article);
   } else {
-    console.error(`Duplicated Article ${article.id}`);
+    const errorMsg = `Duplicated Article ${article.id}`;
+    console.error(errorMsg);
+    throw new ServiceException(400, errorMsg);
   }
 };
 
