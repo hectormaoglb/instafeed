@@ -57,7 +57,7 @@ app.post("/articles", async (req, res) => {
   res.header("Content-Type", "application/json");
   try {
     await saveArticle(newArticle);
-    replyWithResult(newArticle, res);
+    reply(201, newArticle, res);
   } catch (error) {
     replyWithError(error, res);
   }
