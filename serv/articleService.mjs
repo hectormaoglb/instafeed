@@ -1,27 +1,7 @@
 import { ServiceException } from "../exc/serviceException.mjs";
-import {
-  init as initRepo,
-  loadArticles,
-  findAll,
-  findById,
-  saveValidArticle,
-  saveInvalidArticle,
-} from "../repo/articleRepo.mjs";
+import { findAll, findById, saveValidArticle } from "../repo/articleRepo.mjs";
 
 import validateArticle from "../validator/articleValidator.mjs";
-
-export const init = async (validArticlePath, invalidArticlePath) => {
-  initRepo({
-    validPath: validArticlePath,
-    invalidPath: invalidArticlePath,
-  });
-  try {
-    await loadArticles();
-    console.log("Articles were loaded ... 📰");
-  } catch (error) {
-    console.log("Error loading articles ... ❌", error);
-  }
-};
 
 export const getAllArticles = async () => findAll();
 
@@ -39,7 +19,6 @@ export const saveArticle = async (newArticle) => {
     await validateArticle(newArticle);
     await saveValidArticle(newArticle);
   } catch (error) {
-    saveInvalidArticle(newArticle);
     throw error;
   }
 };
