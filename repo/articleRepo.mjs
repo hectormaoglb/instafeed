@@ -1,81 +1,43 @@
-import { promises, createReadStream } from "fs";
-import readline from "readline";
+import { MongoClient } from "mongodb";
 import { ServiceException } from "../exc/serviceException.mjs";
 
 let opts = {
-  validPath: "./db.json",
-  invalidPath: "./invalid.json",
+  connectionString: "mongodb://127.0.0.1:27017",
+  db: "instafeed",
+  collection: "articles",
 };
 
-let articles = [];
-let articlesById = {};
+let articleCollection = null;
 
-const articleExists = (article) => {
-  return article.id in articlesById;
-};
-
-export const loadArticles = async () => {
-  const input = createReadStream(opts.validPath);
-  const read = readline.createInterface({
-    input,
-    terminal: false,
-  });
-
-  return new Promise((resolve, reject) => {
-    input.on("close", () => {
-      read.close();
-      resolve();
-    });
-
-    read.on("line", (line) => {
-      const article = JSON.parse(line);
-      if (!articleExists(article)) {
-        addArticle(article);
-      }
-    });
-  });
-};
-
-export const addArticle = async (article) => {
-  articles = [...articles, article];
-  articlesById = {
-    ...articlesById,
-    [article.id]: article,
-  };
-};
-
-export const init = (newOpts) => {
+export const init = async (newOpts) => {
   opts = {
     ...opts,
     ...newOpts,
   };
-};
-
-const writeRecord = async (path, record) => {
-  promises.writeFile(path, JSON.stringify(record) + "\n", { flag: "a" });
+  const client = new MongoClient(opts.connectionString);
+  await client.connect();
+  const db = client.db(opts.db);
+  articleCollection = db.collection(opts.collection);
 };
 
 export const saveValidArticle = async (article) => {
-  if (!articleExists(article)) {
-    console.debug("Write a valid article in ", opts.validPath);
-    await writeRecord(opts.validPath, article);
-    addArticle(article);
-  } else {
-    const errorMsg = `Duplicated Article ${article.id}`;
-    console.error(errorMsg);
-    throw new ServiceException(400, errorMsg);
-  }
-};
-
-export const saveInvalidArticle = async (article) => {
-  console.debug("Write an invalid article in ", opts.invalidPath);
-  writeRecord(opts.invalidPath, article);
+  const result = await articleCollection.updateOne(
+    { id: article.id },
+    { $set: article },
+    {
+      upsert: true,
+    }
+  );
+  console.log(
+    `Insert / Update Article ${article.id} result: ${JSON.stringify(result)}`
+  );
+  return true;
 };
 
 export const findAll = async () => {
-  return articles;
+  return articleCollection.find().toArray();
 };
 
 export const findById = async (id) => {
-  return articlesById[id];
+  return await articleCollection.findOne({ id });
 };
