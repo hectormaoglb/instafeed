@@ -3,6 +3,8 @@ import {
   getAllArticles,
   getArticleById,
   saveArticle,
+  deleteArticle,
+  updateArticle,
 } from "./serv/articleService.mjs";
 
 import { init as initRepo } from "./repo/articleRepo.mjs";
@@ -21,12 +23,9 @@ const buildError = (error) => ({
 });
 
 const reply = (status, payload, res) => {
+  res.header("Content-Type", "application/json");
   res.status(status);
   res.send(JSON.stringify(payload));
-};
-
-const replyWithResult = (result, res) => {
-  reply(200, result, res);
 };
 
 const replyWithError = (error, res) => {
@@ -35,42 +34,63 @@ const replyWithError = (error, res) => {
   reply(payload.status, payload, res);
 };
 
+const executeOperation = async (callServiceSupplier, res, okStatus) => {
+  try {
+    const result = await callServiceSupplier();
+    const status = okStatus || 200;
+    reply(status, result, res);
+  } catch (error) {
+    replyWithError(error, res);
+  }
+};
+
 const initWebService = () => {
   const app = express();
 
   app.use(bodyParser.json());
 
-  app.get("/articles", async (req, res) => {
-    res.header("Content-Type", "application/json");
-    try {
-      const result = await getAllArticles();
-      replyWithResult(result, res);
-    } catch (error) {
-      replyWithError(error, res);
-    }
-  });
+  app.get("/articles", async (req, res) =>
+    executeOperation(async () => getAllArticles(), res)
+  );
 
-  app.post("/articles", async (req, res) => {
-    const newArticle = req.body;
-    res.header("Content-Type", "application/json");
-    try {
-      await saveArticle(newArticle);
-      reply(201, newArticle, res);
-    } catch (error) {
-      replyWithError(error, res);
-    }
-  });
+  app.post("/articles", async (req, res) =>
+    executeOperation(
+      async () => {
+        const newArticle = req.body;
+        return saveArticle(newArticle);
+      },
+      res,
+      201
+    )
+  );
 
-  app.get("/articles/:articleId", async (req, res) => {
-    res.header("Content-Type", "application/json");
-    try {
+  app.get("/articles/:articleId", async (req, res) =>
+    executeOperation(async () => {
       const { articleId } = req.params;
-      const result = await getArticleById(articleId);
-      replyWithResult(result, res);
-    } catch (error) {
-      replyWithError(error, res);
-    }
-  });
+      return getArticleById(articleId);
+    }, res)
+  );
+
+  app.delete("/articles/:articleId", async (req, res) =>
+    executeOperation(async () => {
+      const { articleId } = req.params;
+      return deleteArticle(articleId);
+    }, res)
+  );
+  app.put("/articles/:articleId", async (req, res) =>
+    executeOperation(async () => {
+      const { articleId } = req.params;
+      const article = { ...req.body, id: articleId };
+      return updateArticle(articleId, article, true);
+    }, res)
+  );
+  app.patch("/articles/:articleId", async (req, res) =>
+    executeOperation(async () => {
+      const { articleId } = req.params;
+      const article = req.body;
+      return updateArticle(articleId, article, false);
+    }, res)
+  );
 
   app.listen(port, () => {
     console.log(`Instafeed app listening 🏁 at http://localhost:${port}`);

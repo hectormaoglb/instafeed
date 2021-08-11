@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ReturnDocument } from "mongodb";
 import { ServiceException } from "../exc/serviceException.mjs";
 
 let opts = {
@@ -21,17 +21,18 @@ export const init = async (newOpts) => {
 };
 
 export const saveValidArticle = async (article) => {
-  const result = await articleCollection.updateOne(
+  const result = await articleCollection.findOneAndUpdate(
     { id: article.id },
     { $set: article },
     {
       upsert: true,
+      returnDocument: ReturnDocument.AFTER,
     }
   );
   console.log(
     `Insert / Update Article ${article.id} result: ${JSON.stringify(result)}`
   );
-  return true;
+  return result.value;
 };
 
 export const findAll = async () => {
@@ -40,4 +41,18 @@ export const findAll = async () => {
 
 export const findById = async (id) => {
   return await articleCollection.findOne({ id });
+};
+
+export const deleteById = async (id) => {
+  const result = await articleCollection.findOneAndDelete({ id });
+  return result.value;
+};
+
+export const updateById = async (id, fields) => {
+  const result = await articleCollection.findOneAndUpdate(
+    { id },
+    { $set: fields },
+    { returnDocument: ReturnDocument.AFTER }
+  );
+  return result.value;
 };
