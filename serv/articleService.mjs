@@ -1,7 +1,16 @@
 import { ServiceException } from "../exc/serviceException.mjs";
-import { findAll, findById, saveValidArticle } from "../repo/articleRepo.mjs";
+import {
+  findAll,
+  findById,
+  saveValidArticle,
+  deleteById,
+  updateById,
+} from "../repo/articleRepo.mjs";
 
-import validateArticle from "../validator/articleValidator.mjs";
+import {
+  validateArticle,
+  validatePartialArticle,
+} from "../validator/articleValidator.mjs";
 
 export const getAllArticles = async () => findAll();
 
@@ -15,10 +24,27 @@ export const getArticleById = async (articleId) => {
 };
 
 export const saveArticle = async (newArticle) => {
-  try {
-    await validateArticle(newArticle);
-    await saveValidArticle(newArticle);
-  } catch (error) {
-    throw error;
+  await validateArticle(newArticle);
+  return saveValidArticle(newArticle);
+};
+
+export const deleteArticle = async (id) => {
+  const result = await deleteById(id);
+  if (!result) {
+    throw new ServiceException(404, `Article ${id} not found`);
   }
+  return result;
+};
+
+export const updateArticle = async (id, newArticleValues, completeArticle) => {
+  if (completeArticle) {
+    await validateArticle(newArticleValues);
+  } else {
+    await validatePartialArticle(newArticleValues);
+  }
+  const result = await updateById(id, newArticleValues);
+  if (!result) {
+    throw new ServiceException(404, `Article ${id} not found`);
+  }
+  return result;
 };
