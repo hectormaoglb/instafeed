@@ -7,14 +7,25 @@ import {
   updateArticle,
 } from "./serv/articleService.mjs";
 
-import { init as initRepo } from "./repo/articleRepo.mjs";
+import {
+  getAllAuthors,
+  getAuthorById,
+  saveAuthor,
+  deleteAuthor,
+  updateAuthor,
+} from "./serv/authorService.mjs";
+
+import { init as initArticleRepo } from "./repo/articleRepo.mjs";
+import { init as initAuthorRepo } from "./repo/authorRepo.mjs";
 
 import bodyParser from "body-parser";
+import { MongoClient } from "mongodb";
 
 const port = parseInt(process.argv[2] || "8080");
 const connectionString = process.argv[3] || "mongodb://127.0.0.1:27017";
 const db = process.argv[4] || "instafeed";
-const collection = process.argv[5] || "articles";
+const articleCollection = process.argv[5] || "articles";
+const authorCollection = process.argv[6] || "authors";
 
 const buildError = (error) => ({
   status: error.status || 500,
@@ -44,11 +55,7 @@ const executeOperation = async (callServiceSupplier, res, okStatus) => {
   }
 };
 
-const initWebService = () => {
-  const app = express();
-
-  app.use(bodyParser.json());
-
+const setArticleRoutes = (app) => {
   app.get("/articles", async (req, res) =>
     executeOperation(async () => getAllArticles(), res)
   );
@@ -91,15 +98,75 @@ const initWebService = () => {
       return updateArticle(articleId, article, false);
     }, res)
   );
+};
+
+const setAuthorRoutes = (app) => {
+  app.get("/authors", async (req, res) =>
+    executeOperation(async () => getAllAuthors(), res)
+  );
+
+  app.post("/authors", async (req, res) =>
+    executeOperation(
+      async () => {
+        const newAuthor = req.body;
+        return saveAuthor(newAuthor);
+      },
+      res,
+      201
+    )
+  );
+
+  app.get("/authors/:authorId", async (req, res) =>
+    executeOperation(async () => {
+      const { authorId } = req.params;
+      return getAuthorById(authorId);
+    }, res)
+  );
+
+  app.delete("/authors/:authorId", async (req, res) =>
+    executeOperation(async () => {
+      const { authorId } = req.params;
+      return deleteAuthor(authorId);
+    }, res)
+  );
+  app.put("/authors/:authorId", async (req, res) =>
+    executeOperation(async () => {
+      const { authorId } = req.params;
+      return updateAuthor(authorId, req.body);
+    }, res)
+  );
+};
+
+const initWebService = () => {
+  const app = express();
+
+  app.use(bodyParser.json());
+
+  setArticleRoutes(app);
+  setAuthorRoutes(app);
 
   app.listen(port, () => {
     console.log(`Instafeed app listening 🏁 at http://localhost:${port}`);
   });
 };
 
-initRepo({ connectionString, db, collection }).then(
-  (data) => {
-    initWebService();
-  },
+const start = async () => {
+  const client = new MongoClient(connectionString);
+  await client.connect();
+  initArticleRepo({
+    client,
+    db,
+    collection: articleCollection,
+  });
+  initAuthorRepo({
+    client,
+    db,
+    collection: authorCollection,
+  });
+  initWebService();
+};
+
+start().then(
+  () => console.log("Instafeed service is Ready !!! 🚀"),
   (error) => console.error("Service initialization error ❌", error)
 );
