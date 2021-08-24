@@ -33,6 +33,32 @@ export const saveAuthor = async (author) => {
   return result.value;
 };
 
+export const addArticle = async (authorId, articleId) => {
+  const result = await authorCollection.findOneAndUpdate(
+    { $and: [{ id: authorId }, { articles: { $ne: articleId } }] },
+    { $push: { articles: articleId } },
+    {
+      upsert: true,
+      returnDocument: ReturnDocument.AFTER,
+    }
+  );
+  console.log(`Add Article ${articleId} to author ${authorId}`);
+  return result.value;
+};
+
+export const delArticle = async (authorId, articleId) => {
+  const result = await authorCollection.findOneAndUpdate(
+    { $and: [{ id: authorId }, { articles: articleId }] },
+    { $pull: { articles: articleId } },
+    {
+      upsert: true,
+      returnDocument: ReturnDocument.AFTER,
+    }
+  );
+  console.log(`Remove Article ${articleId} from author ${authorId}`);
+  return result.value;
+};
+
 export const findAll = async () => {
   return authorCollection.find().toArray();
 };

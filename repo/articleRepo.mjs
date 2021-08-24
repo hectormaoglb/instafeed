@@ -47,6 +47,11 @@ export const deleteById = async (id) => {
   return result.value;
 };
 
+export const deleteByAuthor = async (authorId) => {
+  const result = await articleCollection.deleteMany({ author: authorId });
+  return result.value;
+};
+
 export const updateById = async (id, fields) => {
   const result = await articleCollection.findOneAndUpdate(
     { id },
