@@ -12,7 +12,11 @@ import {
   validatePartialArticle,
 } from "../validator/articleValidator.mjs";
 
-import { findById as findAuthorById } from "../repo/authorRepo.mjs";
+import {
+  findById as findAuthorById,
+  addArticle,
+  delArticle,
+} from "../repo/authorRepo.mjs";
 
 export const getAllArticles = async () => findAll();
 
@@ -34,7 +38,9 @@ export const saveArticle = async (newArticle) => {
       `Author ${newArticle.author} doesn't exists`
     );
   }
-  return saveValidArticle(newArticle);
+  const savedArticle = await saveValidArticle(newArticle);
+  await addArticle(newArticle.author, savedArticle.id);
+  return savedArticle;
 };
 
 export const deleteArticle = async (id) => {
@@ -42,6 +48,7 @@ export const deleteArticle = async (id) => {
   if (!result) {
     throw new ServiceException(404, `Article ${id} not found`);
   }
+  await delArticle(result.author, result.id);
   return result;
 };
 
@@ -65,6 +72,10 @@ export const updateArticle = async (id, newArticleValues, completeArticle) => {
   const result = await updateById(id, newArticleValues);
   if (!result) {
     throw new ServiceException(404, `Article ${id} not found`);
+  }
+
+  if (newArticleValues.author) {
+    await addArticle(newArticleValues.author, result.id);
   }
   return result;
 };

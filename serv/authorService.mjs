@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { validateAuthor } from "../validator/authorValidator.mjs";
 
+import { deleteByAuthor as deleteArticlesByAuthor } from "../repo/articleRepo.mjs";
+
 export const getAllAuthors = async () => findAll();
 
 export const getAuthorById = async (author) => {
@@ -38,6 +40,7 @@ export const deleteAuthor = async (id) => {
   if (!result) {
     throw new ServiceException(404, `Author ${id} not found`);
   }
+  await deleteArticlesByAuthor(id);
   return result;
 };
 
