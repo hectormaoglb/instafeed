@@ -5,7 +5,7 @@ import { ServiceException } from "../exc/serviceException.mjs";
 const schema = {
   id: yup.string().min(36).max(36).required(),
   title: yup.string().min(1).max(255).required(),
-  author: yup.string().min(1).max(100).required(),
+  author: yup.string().uuid().required(),
   modifiedAt: yup.date().max(new Date()).required(),
   publishedAt: yup.date().max(new Date()).nullable().notRequired(),
   url: yup.string().when("publishedAt", {

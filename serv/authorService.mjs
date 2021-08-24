@@ -26,6 +26,7 @@ export const saveAuthor = async (author) => {
   const newAuthor = {
     ...author,
     id: uuidv4(),
+    articles: [],
   };
 
   await validateAuthor(newAuthor);

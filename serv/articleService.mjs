@@ -12,6 +12,8 @@ import {
   validatePartialArticle,
 } from "../validator/articleValidator.mjs";
 
+import { findById as findAuthorById } from "../repo/authorRepo.mjs";
+
 export const getAllArticles = async () => findAll();
 
 export const getArticleById = async (articleId) => {
@@ -25,6 +27,13 @@ export const getArticleById = async (articleId) => {
 
 export const saveArticle = async (newArticle) => {
   await validateArticle(newArticle);
+  const author = await findAuthorById(newArticle.author);
+  if (!author) {
+    throw new ServiceException(
+      400,
+      `Author ${newArticle.author} doesn't exists`
+    );
+  }
   return saveValidArticle(newArticle);
 };
 
@@ -42,6 +51,17 @@ export const updateArticle = async (id, newArticleValues, completeArticle) => {
   } else {
     await validatePartialArticle(newArticleValues);
   }
+
+  if (newArticleValues.author) {
+    const author = await findAuthorById(newArticleValues.author);
+    if (!author) {
+      throw new ServiceException(
+        400,
+        `Author ${newArticle.author} doesn't exists`
+      );
+    }
+  }
+
   const result = await updateById(id, newArticleValues);
   if (!result) {
     throw new ServiceException(404, `Article ${id} not found`);
