@@ -7,7 +7,7 @@
   "scripts": {
     "test": "test",
     "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json",
-    "server": "npx nodemon server.js"
+    "index": "npx nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,10 @@
     "mongodb": "^4.1.0",
     "uuid": "^8.3.2",
     "cors": "^2.8.5",
-    "helmet": "^4.6.0"
+    "helmet": "^4.6.0",
+    "passport": "^0.4.1",
+    "passport-http": "^0.3.0",
+    "passport-jwt": "^4.0.0",
+    "jsonwebtoken": "^8.5.1"
   }
 }
