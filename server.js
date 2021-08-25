@@ -25,7 +25,10 @@ import cors from "cors";
 
 import helmet from "helmet";
 
-const port = parseInt(process.argv[2] || "8080");
+import fs from "fs/promises";
+import https from "https";
+
+const port = parseInt(process.argv[2] || "8443");
 const connectionString = process.argv[3] || "mongodb://127.0.0.1:27017";
 const db = process.argv[4] || "instafeed";
 const articleCollection = process.argv[5] || "articles";
@@ -141,8 +144,11 @@ const setAuthorRoutes = (app) => {
   );
 };
 
-const initWebService = () => {
+const initWebService = async () => {
   const app = express();
+
+  const key = await fs.readFile("./cert/server.key");
+  const cert = await fs.readFile("./cert/server.cert");
 
   app.use(bodyParser.json());
   app.use(cors());
@@ -151,9 +157,17 @@ const initWebService = () => {
   setArticleRoutes(app);
   setAuthorRoutes(app);
 
-  app.listen(port, () => {
-    console.log(`Instafeed app listening 🏁 at http://localhost:${port}`);
-  });
+  https
+    .createServer(
+      {
+        key,
+        cert,
+      },
+      app
+    )
+    .listen(port, () => {
+      console.log(`Instafeed app listening 🏁 at https://localhost:${port}`);
+    });
 };
 
 const start = async () => {
@@ -169,7 +183,7 @@ const start = async () => {
     db,
     collection: authorCollection,
   });
-  initWebService();
+  await initWebService();
 };
 
 start().then(
