@@ -21,6 +21,10 @@ import { init as initAuthorRepo } from "./repo/authorRepo.mjs";
 import bodyParser from "body-parser";
 import { MongoClient } from "mongodb";
 
+import cors from "cors";
+
+import helmet from "helmet";
+
 const port = parseInt(process.argv[2] || "8080");
 const connectionString = process.argv[3] || "mongodb://127.0.0.1:27017";
 const db = process.argv[4] || "instafeed";
@@ -141,6 +145,8 @@ const initWebService = () => {
   const app = express();
 
   app.use(bodyParser.json());
+  app.use(cors());
+  app.use(helmet());
 
   setArticleRoutes(app);
   setAuthorRoutes(app);
