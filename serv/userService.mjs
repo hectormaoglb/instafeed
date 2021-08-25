@@ -11,14 +11,23 @@ import { validateUser } from "../validator/userValidator.mjs";
 
 import { createHash } from "crypto";
 
-export const getAllUsers = async () => findAll();
+export const getAllUsers = async () => {
+  const users = await findAll();
+  return users.map((usr) => ({
+    ...usr,
+    password: undefined,
+  }));
+};
 
 export const getUserById = async (login) => {
   const result = await findById(login);
   if (!result) {
     throw new ServiceException(404, `User Not Found [${login}]`);
   } else {
-    return result;
+    return {
+      ...result,
+      password: undefined,
+    };
   }
 };
 
