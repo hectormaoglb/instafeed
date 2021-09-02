@@ -18,9 +18,32 @@ import {
   delArticle,
 } from "../repo/authorRepo.mjs";
 
+import { EventEmitter } from "events";
+import { getCache, setCache } from "../cache/cacheRepo.mjs";
+import logger from "../logger/logger.mjs";
+
+const emitter = new EventEmitter();
+
+const saveArticleEvent = "ARTICLE_SAVED";
+
+const cacheKey = (id) => `ARTICLE[${id}]`;
+
+const saveArticleCache = async (article) => {
+  await setCache(cacheKey(article.id), article);
+  logger.info(`Article ${article.id} was stored in cache`, { article });
+};
+
+emitter.addListener(saveArticleEvent, saveArticleCache);
+
 export const getAllArticles = async () => findAll();
 
 export const getArticleById = async (articleId) => {
+  const cachedArticle = await getCache(cacheKey(articleId));
+  if (!!cachedArticle) {
+    logger.info(`Getting Article from Cache ${articleId}`);
+    return cachedArticle;
+  }
+
   const result = await findById(articleId);
   if (!result) {
     throw new ServiceException(404, `Artcile Not Found [${articleId}]`);
@@ -40,6 +63,7 @@ export const saveArticle = async (newArticle) => {
   }
   const savedArticle = await saveValidArticle(newArticle);
   await addArticle(newArticle.author, savedArticle.id);
+  emitter.emit(saveArticleEvent, savedArticle);
   return savedArticle;
 };
 

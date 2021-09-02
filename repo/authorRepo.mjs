@@ -28,7 +28,7 @@ export const saveAuthor = async (author) => {
       returnDocument: ReturnDocument.AFTER,
     }
   );
-  logger.log(`Insert / Update Author ${author.id}`, { result });
+  logger.info(`Insert / Update Author ${author.id}`, { result });
   return result.value;
 };
 

@@ -32,6 +32,7 @@ export const setArticleRoutes = (app) => {
 
   app.get(articleIdPath, async (req, res) =>
     executeOperation(async () => {
+      res.header("Cache-Control", "private");
       const { articleId } = req.params;
       return getArticleById(articleId);
     }, res)

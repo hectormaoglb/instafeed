@@ -1,6 +1,7 @@
 import { init as initArticleRepo } from "./repo/articleRepo.mjs";
 import { init as initAuthorRepo } from "./repo/authorRepo.mjs";
 import { init as initUserRepo } from "./repo/userRepo.mjs";
+import { init as initCacheRepo } from "./cache/cacheRepo.mjs";
 
 import { MongoClient } from "mongodb";
 
@@ -15,6 +16,10 @@ const db = process.env["DATABASE"] || "instafeed";
 const articleCollection = process.env["ARTICLE_COLLECTION"] || "articles";
 const authorCollection = process.env["ARTICLE_COLLECTION"] || "authors";
 const userCollection = process.env["ARTICLE_COLLECTION"] || "users";
+
+const redisHost = process.env["REDIS_HOST"] || "127.0.0.1";
+const redisPort = parseInt(process.env["REDIS_PORT"] || "6379");
+const redisTtl = parseInt(process.env["REDIS_TTL"] || "3600");
 
 const secretKey = "INSTAFEED_TOP_SECRET";
 
@@ -36,6 +41,9 @@ const start = async () => {
     db,
     collection: userCollection,
   });
+
+  initCacheRepo({ host: redisHost, port: redisPort, ttl: redisTtl });
+
   await initWebService(port, secretKey);
 };
 
