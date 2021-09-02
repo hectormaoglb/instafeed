@@ -8,9 +8,9 @@ const schema = {
   articles: yup.array(yup.string()).min(0).required(),
 };
 
-export const validateAuthor = async (article) => {
+export const validateAuthor = async (author) => {
   try {
-    await yup.object().shape(schema).validate(article);
+    await yup.object().shape(schema).validate(author);
     return true;
   } catch (error) {
     const msg = error.errors.join("\n");
