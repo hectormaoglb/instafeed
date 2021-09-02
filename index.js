@@ -8,12 +8,13 @@ import { initWebService } from "./server/serverConfig.mjs";
 
 import logger from "./logger/logger.mjs";
 
-const port = parseInt(process.argv[2] || "8443");
-const connectionString = process.argv[3] || "mongodb://127.0.0.1:27017";
-const db = process.argv[4] || "instafeed";
-const articleCollection = process.argv[5] || "articles";
-const authorCollection = process.argv[6] || "authors";
-const userCollection = process.argv[6] || "users";
+const port = parseInt(process.env["PORT"] || "8443");
+const connectionString =
+  process.env["CONECTION_STRING"] || "mongodb://127.0.0.1:27017";
+const db = process.env["DATABASE"] || "instafeed";
+const articleCollection = process.env["ARTICLE_COLLECTION"] || "articles";
+const authorCollection = process.env["ARTICLE_COLLECTION"] || "authors";
+const userCollection = process.env["ARTICLE_COLLECTION"] || "users";
 
 const secretKey = "INSTAFEED_TOP_SECRET";
 

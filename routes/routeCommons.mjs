@@ -2,6 +2,8 @@ import passport from "passport";
 
 import logger from "../logger/logger.mjs";
 
+import { ServiceException } from "../exc/serviceException.mjs";
+
 const buildError = (error) => ({
   status: error.status || 500,
   message: error.message,

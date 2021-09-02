@@ -44,6 +44,11 @@ export const findById = async (login) => {
   return await userCollection.findOne({ login });
 };
 
+export const findByLogin = async (login, password) => {
+  logger.info(`Find user by login-password ${login}`);
+  return await userCollection.findOne({ login, password });
+};
+
 export const deleteById = async (login) => {
   logger.info(`Delete user by login ${login}`);
   const result = await userCollection.findOneAndDelete({ login });

@@ -17,6 +17,7 @@ import { setArticleRoutes } from "../routes/articleRoute.mjs";
 import { setAuthorRoutes } from "../routes/authorRoute.mjs";
 import { setUserRoutes } from "../routes/userRoute.mjs";
 import { setSessionRoutes } from "../routes/sessionRoute.mjs";
+import { setCrashRoutes } from "../routes/crashRoute.mjs";
 
 import { getUserById, login } from "../serv/userService.mjs";
 
@@ -72,7 +73,8 @@ export const initWebService = async (port, secretKey) => {
   setArticleRoutes(app);
   setAuthorRoutes(app);
   setUserRoutes(app);
-  setSessionRoutes(app);
+  setSessionRoutes(app, secretKey);
+  setCrashRoutes(app);
 
   https
     .createServer(
