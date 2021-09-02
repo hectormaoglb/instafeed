@@ -30,7 +30,7 @@ export const setArticleRoutes = (app) => {
       )
   );
 
-  app.get(`${articleBasePath}/:articleId`, async (req, res) =>
+  app.get(articleIdPath, async (req, res) =>
     executeOperation(async () => {
       const { articleId } = req.params;
       return getArticleById(articleId);
