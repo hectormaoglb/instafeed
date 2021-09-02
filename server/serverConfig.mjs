@@ -22,6 +22,8 @@ import { getUserById, login } from "../serv/userService.mjs";
 
 import bodyParser from "body-parser";
 
+import logger from "../logger/logger.mjs";
+
 const setBasicAuthentication = () => {
   passport.use(
     new BasicStrategy(async (username, password, done) => {
@@ -81,6 +83,6 @@ export const initWebService = async (port, secretKey) => {
       app
     )
     .listen(port, () => {
-      console.log(`Instafeed app listening 🏁 at https://localhost:${port}`);
+      logger.info(`Instafeed app listening 🏁 at https://localhost:${port}`);
     });
 };
