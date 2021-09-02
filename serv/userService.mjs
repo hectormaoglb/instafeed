@@ -5,6 +5,7 @@ import {
   saveUser as save,
   deleteById,
   updateById,
+  findByLogin,
 } from "../repo/userRepo.mjs";
 
 import { validateUser } from "../validator/userValidator.mjs";
@@ -28,6 +29,15 @@ export const getUserById = async (login) => {
       ...result,
       password: undefined,
     };
+  }
+};
+
+export const getUserByLogin = async (login, password) => {
+  const result = await findByLogin(login, password);
+  if (!result) {
+    throw new ServiceException(404, `User Not Found [${login}]`);
+  } else {
+    return result;
   }
 };
 
@@ -69,14 +79,9 @@ export const updateUser = async (login, newUserValues) => {
 
 export const login = async (username, password) => {
   const saltedPassword = encryptPassword(password);
-  const user = await getUserById(username);
+  const user = await getUserByLogin(username, saltedPassword);
   if (!user) {
     return null;
   }
-
-  if (user.password !== saltedPassword) {
-    return null;
-  }
-
   return user;
 };

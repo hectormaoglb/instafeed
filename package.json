@@ -7,7 +7,10 @@
   "scripts": {
     "test": "jest",
     "process": "npx nodemon --ignore db.json --ignore invalid.json process.js ./articles ./db.json ./invalid.json",
-    "index": "npx nodemon index.js"
+    "index": "npx nodemon index.js",
+    "start": "pm2 start index.js --name instafeed",
+    "stop": "pm2 stop instafeed",
+    "restart": "pm2 restart instafeed"
   },
   "repository": {
     "type": "git",
@@ -42,6 +45,7 @@
     "passport": "^0.4.1",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
+    "pm2": "^5.1.1",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
     "yup": "^0.32.9"
