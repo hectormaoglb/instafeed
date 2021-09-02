@@ -6,6 +6,8 @@ import { MongoClient } from "mongodb";
 
 import { initWebService } from "./server/serverConfig.mjs";
 
+import logger from "./logger/logger.mjs";
+
 const port = parseInt(process.argv[2] || "8443");
 const connectionString = process.argv[3] || "mongodb://127.0.0.1:27017";
 const db = process.argv[4] || "instafeed";
@@ -37,6 +39,6 @@ const start = async () => {
 };
 
 start().then(
-  () => console.log("Instafeed service is Ready !!! 🚀"),
-  (error) => console.error("Service initialization error ❌", error)
+  () => logger.info("Instafeed service is Ready !!! 🚀"),
+  (error) => logger.error("Service initialization error ❌", error)
 );

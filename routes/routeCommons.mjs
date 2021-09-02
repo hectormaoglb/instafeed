@@ -1,5 +1,7 @@
 import passport from "passport";
 
+import logger from "../logger/logger.mjs";
+
 const buildError = (error) => ({
   status: error.status || 500,
   message: error.message,
@@ -13,7 +15,7 @@ const reply = (status, payload, res) => {
 };
 
 export const replyWithError = (error, res) => {
-  console.error(`Error processing request: ${error.message} ❌`, error);
+  logger.error(`Error processing request: ${error.message} ❌`, error);
   const payload = buildError(error);
   reply(payload.status, payload, res);
 };
