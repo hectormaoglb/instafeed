@@ -25,6 +25,8 @@ import bodyParser from "body-parser";
 
 import logger from "../logger/logger.mjs";
 
+import swaggerUI from "swagger-ui-express";
+
 const setBasicAuthentication = () => {
   passport.use(
     new BasicStrategy(async (username, password, done) => {
@@ -69,6 +71,12 @@ export const initWebService = async (port, secretKey) => {
   app.use(bodyParser.json());
   app.use(cors());
   app.use(helmet());
+
+  const swaggerDoc = JSON.parse(
+    await fs.readFile("./swagger/instafeed_openapi.json")
+  );
+
+  app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 
   setArticleRoutes(app);
   setAuthorRoutes(app);
