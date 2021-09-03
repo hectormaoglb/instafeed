@@ -1,0 +1,807 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Instafeed",
+    "description": "Especificación del API del servicio Instafeed",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Hector Mauricio Gonzalez",
+      "email": "h.gonzalez@globant.com",
+      "url": "https://github.com/hectormaoglb/instafeed"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://127.0.0.1:8443/",
+      "description": "Servidor Local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Artículos"
+    },
+    {
+      "name": "Autores"
+    },
+    {
+      "name": "Usuarios"
+    },
+    {
+      "name": "Sesión"
+    },
+    {
+      "name": "Crash"
+    }
+  ],
+  "paths": {
+    "/artiles": {
+      "get": {
+        "summary": "Retorna una lista con todos los articulos almacenados.",
+        "tags": [
+          "Artículos"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON Array con los articulos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Articles"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crea un nuevo Artículo.",
+        "tags": [
+          "Artículos"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Article"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Artículo Agregado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/artiles/{id}": {
+      "get": {
+        "summary": "Retorna una lista con todos los articulos almacenados.",
+        "tags": [
+          "Artículos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Artículo",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artículo encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifica Artículo.",
+        "tags": [
+          "Artículos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Artículo",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Article"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Artículo modificado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifica parcialmente Artículo.",
+        "tags": [
+          "Artículos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Artículo",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Se coloca como referencia el payload, pero este payload se puede enviar de manera parcial",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Article"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Artículo modificado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Elimina Artículo.",
+        "tags": [
+          "Artículos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Artículo",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artículo eliminado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors": {
+      "get": {
+        "summary": "Retorna una lista con todos los autores almacenados.",
+        "tags": [
+          "Autores"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON Array con los autores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authors"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crea un nuevo Autor.",
+        "tags": [
+          "Autores"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Author"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Autor Agregado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Author"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/{id}": {
+      "get": {
+        "summary": "Retorna una lista con todos los articulos almacenados.",
+        "tags": [
+          "Autores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Autor",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autor encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Author"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifica un Autor.",
+        "tags": [
+          "Autores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Autor",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Author"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Artículo modificado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Elimina Autor",
+        "tags": [
+          "Autores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador del Autor",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autor eliminado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Retorna una lista con todos los usuarios almacenados.",
+        "tags": [
+          "Usuarios"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON Array con los usuarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crea un nuevo Usuario.",
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario Agregado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{login}": {
+      "get": {
+        "summary": "Busca un usuario por su login.",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "description": "login de usuario",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autor encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Author"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifica un Autor.",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "description": "login de usuario",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Author"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Artículo modificado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Elimina Autor",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "description": "login de usuario",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autor eliminado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/session": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Crea un nuevo token JWT.",
+        "tags": [
+          "Sesión"
+        ],
+        "responses": {
+          "200": {
+            "description": "Token Creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crash": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Mata el servidor de express",
+        "tags": [
+          "Crash"
+        ],
+        "responses": {
+          "200": {
+            "description": "Bajada del servicio en progreso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Crash"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Articles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Article"
+        }
+      },
+      "Article": {
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Identificador del artículo en la BD"
+          },
+          "id": {
+            "type": "string",
+            "description": "Identificador del artículo",
+            "minLength": 36,
+            "maxLength": 36
+          },
+          "title": {
+            "type": "string",
+            "description": "Titulo del artículo",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "author": {
+            "type": "string",
+            "description": "Autor del artículo",
+            "format": "uuid"
+          },
+          "modifiedAt": {
+            "type": "string",
+            "description": "Fecha de creación / modificación del artículo",
+            "format": "date",
+            "pattern": "/([0-9]{2})\\/([0-9]{2})\\/([0-9]{4})/",
+            "example": "05/17/2019"
+          },
+          "publishedAt": {
+            "type": "string",
+            "description": "Fecha de publicación del artículo",
+            "format": "date",
+            "pattern": "/([0-9]{2})\\/([0-9]{2})\\/([0-9]{4})/",
+            "example": "05/17/2019"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL del artículo",
+            "pattern": "/^https:\\/\\/.*$/",
+            "example": "https://www.google.com"
+          },
+          "keywords": {
+            "type": "array",
+            "description": "Palabras claves del artículo",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string"
+            }
+          },
+          "readMins": {
+            "type": "number",
+            "description": "Minutos de lectura del artículo",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "ARTICLE",
+              "BLOG",
+              "TWEET",
+              "NEWSPAPER"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "author",
+          "modifiedAt",
+          "keywords",
+          "readMins",
+          "source"
+        ]
+      },
+      "Authors": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Author"
+        }
+      },
+      "Author": {
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Identificador del autor en la BD"
+          },
+          "id": {
+            "type": "string",
+            "description": "Identificador del autor",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del autor"
+          },
+          "articles": {
+            "type": "array",
+            "description": "Articulos del autor, Arreglo con los ID",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Users": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      },
+      "User": {
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Identificador del autor en la BD"
+          },
+          "login": {
+            "type": "string",
+            "description": "Login del usuario"
+          },
+          "password": {
+            "type": "string",
+            "description": "password del usuario"
+          },
+          "roles": {
+            "type": "array",
+            "description": "Roles del usuario",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "login",
+          "password",
+          "roles"
+        ]
+      },
+      "Token": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT Token para autorización"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "Crash": {
+        "properties": {
+          "shutdown": {
+            "type": "string",
+            "description": "Indicativo que el servicio se va a bajar"
+          }
+        },
+        "required": [
+          "shutdown"
+        ]
+      }
+    }
+  }
+}
